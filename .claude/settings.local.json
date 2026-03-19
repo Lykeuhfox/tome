@@ -1,0 +1,12 @@
+{
+  "permissions": {
+    "allow": [
+      "WebFetch(domain:scryfall.com)",
+      "Bash(claude mcp:*)",
+      "Bash(npx --yes @upstash/context7-mcp --version)",
+      "Bash(echo \"EXIT CODE: $?\")",
+      "Bash(ng add:*)",
+      "Bash(ng build:*)"
+    ]
+  }
+}

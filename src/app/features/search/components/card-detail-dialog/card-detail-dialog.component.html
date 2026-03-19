@@ -1,0 +1,111 @@
+<div class="flex flex-col md:flex-row gap-6 p-6 max-w-3xl" style="background-color: var(--color-surface); color: var(--color-text)">
+  <!-- Image section -->
+  <div class="flex-shrink-0 flex flex-col items-center gap-3">
+    @if (isDfc()) {
+      <div class="flex gap-2">
+        @for (face of card.card_faces!; track face.name) {
+          <img
+            [src]="face.image_uris?.large ?? face.image_uris?.normal"
+            [alt]="face.name"
+            class="rounded-lg shadow-lg"
+            style="width: 200px;"
+          />
+        }
+      </div>
+    } @else {
+      <img
+        [src]="card.image_uris?.large ?? card.image_uris?.normal"
+        [alt]="card.name"
+        class="rounded-lg shadow-lg"
+        style="width: 280px;"
+      />
+    }
+  </div>
+
+  <!-- Info section -->
+  <div class="flex-1 min-w-0">
+    <mat-dialog-content>
+      <h2 class="text-xl font-semibold mb-1">{{ card.name }}</h2>
+
+      <div class="flex items-center gap-2 mb-3">
+        <span class="text-sm" style="color: var(--color-text-muted)">{{ card.type_line }}</span>
+        @if (card.mana_cost) {
+          <span [innerHTML]="card.mana_cost | manaSymbol"></span>
+        }
+      </div>
+
+      @if (card.oracle_text) {
+        <div class="text-sm mb-3 whitespace-pre-line p-3 rounded" style="background-color: var(--color-bg); border: 1px solid var(--color-border)">
+          {{ card.oracle_text }}
+        </div>
+      }
+
+      @if (card.flavor_text) {
+        <p class="text-sm italic mb-3" style="color: var(--color-text-muted)">{{ card.flavor_text }}</p>
+      }
+
+      @if (card.power != null && card.toughness != null) {
+        <div class="text-sm mb-3">
+          <strong>P/T:</strong> {{ card.power }}/{{ card.toughness }}
+        </div>
+      }
+
+      @if (card.loyalty != null) {
+        <div class="text-sm mb-3">
+          <strong>Loyalty:</strong> {{ card.loyalty }}
+        </div>
+      }
+
+      <div class="text-sm mb-3" style="color: var(--color-text-muted)">
+        <strong style="color: var(--color-text)">Set:</strong>
+        {{ card.set_name }} ({{ card.set | uppercase }}) · {{ card.rarity | titlecase }}
+      </div>
+
+      <!-- Prices -->
+      @if (card.prices) {
+        <div class="flex gap-4 text-sm mb-4">
+          @if (card.prices.usd) {
+            <span><strong>USD:</strong> {{ price(card.prices.usd, '$') }}</span>
+          }
+          @if (card.prices.usd_foil) {
+            <span><strong>Foil:</strong> {{ price(card.prices.usd_foil, '$') }}</span>
+          }
+          @if (card.prices.eur) {
+            <span><strong>EUR:</strong> {{ price(card.prices.eur, '€') }}</span>
+          }
+          @if (card.prices.tix) {
+            <span><strong>Tix:</strong> {{ card.prices.tix }}</span>
+          }
+        </div>
+      }
+
+      <!-- Legalities -->
+      <div class="text-sm">
+        <p class="font-medium mb-2">Legalities</p>
+        <div class="grid grid-cols-2 gap-1">
+          @for (entry of legalityEntries(); track entry.format) {
+            <div class="flex items-center justify-between px-2 py-1 rounded text-xs" style="background-color: var(--color-bg)">
+              <span style="color: var(--color-text-muted)">{{ entry.format | titlecase }}</span>
+              <span [class]="entry.legal === 'legal' ? 'text-green-400' : 'text-red-400'">
+                {{ entry.legal === 'legal' ? 'Legal' : entry.legal === 'not_legal' ? 'Not legal' : (entry.legal | titlecase) }}
+              </span>
+            </div>
+          }
+        </div>
+      </div>
+    </mat-dialog-content>
+
+    <mat-dialog-actions align="end">
+      <a
+        [href]="card.scryfall_uri"
+        target="_blank"
+        rel="noopener"
+        mat-stroked-button
+      >
+        <mat-icon>open_in_new</mat-icon>
+        Scryfall
+      </a>
+      <button mat-button (click)="dialogRef.close()">Close</button>
+    </mat-dialog-actions>
+  </div>
+</div>
